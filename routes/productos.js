@@ -1,0 +1,53 @@
+const { Router } = require('express');
+const { check } = require('express-validator');
+const res = require('express/lib/response');
+const { crearCategoria } = require('../controllers/categorias');
+const { crearProducto, borrarProducto, obtenerProducto, actualizarProducto, obtenerProductos } = require('../controllers/productos');
+const {  existeCategoriaId, existeProductoId } = require('../helpers/db-validators');
+
+const { validarJWT, validarCampos, esAdminRole } = require('../middlewares')
+
+
+const router = Router();
+
+/*
+*{{url}}/api/categorias
+*/
+// Obtener todas las categorias - publico 
+router.get('/', obtenerProductos);
+
+// Obtener una categoria por id  - publico
+ router.get('/:id', [
+    check('id', 'No es un id de Mongo válido').isMongoId(),
+    check('id').custom( existeProductoId ),
+    validarCampos,
+], obtenerProducto);
+
+// Crear una nueva categoria - privado - cualquier persona con un token valido.
+router.post('/', [ 
+    validarJWT,
+    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+    check('categoria', 'No es un id de Mongo').isMongoId(),
+    check('categoria').custom( existeCategoriaId ),
+    validarCampos,
+], crearProducto);
+
+// Actualizar privado - cualquiera con token válido
+router.put('/:id',[
+    validarJWT,
+check('id').custom( existeProductoId ),
+    validarCampos
+], actualizarProducto );
+
+// Borrar una categoria - Admin
+router.delete('/:id',[
+    validarJWT,
+    esAdminRole,
+    check('id', 'No es un id de Mongo válido').isMongoId(),
+    check('id').custom( existeProductoId ),
+    validarCampos,
+    
+], borrarProducto);
+
+
+module.exports = router;
