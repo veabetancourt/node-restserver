@@ -26,7 +26,8 @@ const ProductoSchema = Schema({
         required: true
     },
     descripcion: { type: String},
-    disponible: { type: Boolean, defult: true}
+    disponible: { type: Boolean, defult: true},
+    img: { type: String}
 
 });
 

@@ -1,3 +1,7 @@
-node_modules/
-curso node.js udemy 
+node_modules
+
+
 .env
+
+uploads/productos/**.*
+uploads/usuarios/**.*
